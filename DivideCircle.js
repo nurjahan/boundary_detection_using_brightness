@@ -21,7 +21,7 @@ var DivideCircle=function(circle,theta,radius,u,v,count)
 			{
 				halfCircle1[i][j]=(circle[i][j]/count*2).toFixed(4);
 			}
-            else
+                        else
 			{			
 				if((((x1-x)*(v[i][j]-y))-((y1-y)*(u[i][j]-x)))>0)
 					halfCircle1[i][j]=(circle[i][j]/count*2).toFixed(4);
