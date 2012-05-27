@@ -1,0 +1,21 @@
+{
+"background_page": "background.html",
+
+"permissions": [
+    "tabs",
+    "http://*/*",
+    "https://*/*",
+    "notifications",
+    "contextMenus"
+],
+
+"content_scripts": [
+    {
+        "matches": ["http://*/*","https://*/*"],
+        "js": ["jquery.js", "vertical.js","convolution.js","SetRadius.js","BrightnessGradient.js","BrightnessMap.js","GradientComputation.js","CircleCreation.js" ,"DivideCircle.js","RGBtoGray.js","FeatureCombination.js"],
+        "all_frames": false
+    }
+],
+"name" : "boundary detection using brightness",
+"version" : "1.0"
+}

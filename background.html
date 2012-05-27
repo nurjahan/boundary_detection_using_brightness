@@ -1,0 +1,99 @@
+<html>
+	<head>
+		<script src="jquery.js" type="text/javascript"></script>
+		<script src="convolution.js" type="text/javascript"></script>
+		<script src="SetRadius.js" type="text/javascript"></script>
+		<script src="BrightnessGradient.js" type="text/javascript"></script>
+		<script src="RGBtoGray.js" type="text/javascript"></script>
+		<script src="BrightnessMap.js" type="text/javascript"></script>
+		<script src="GradientComputation.js" type="text/javascript"></script>
+		<script src="CircleCreation.js" type="text/javascript"></script>
+		<script src="DivideCircle.js" type="text/javascript"></script>
+		<script src="FeatureCombination.js" type="text/javascript"></script>
+		<script src="nonmaxSuppression.js" type="text/javascript"></script>
+	
+		<script>
+			chrome.extension.onRequest.addListener(function(request, sender, sendResponse) 
+			{
+				if(request.greeting=="happy")
+				{
+					var srcurl=request.url;
+					var imageObj = new Image();
+					imageObj.src = srcurl;
+					// imageObj.src='http://www.nice.org.uk/media/5C8/A3/panel_conf12.jpg';
+   
+					imageObj.onload = function()
+					{
+						var canvas = $("<canvas>").appendTo('body')[0];
+						canvas.width = imageObj.width;
+						canvas.height = imageObj.height;
+						var context = canvas.getContext("2d");
+						context.drawImage(imageObj, 0, 0);
+						var imageData = context.getImageData(0, 0, imageObj.width, imageObj.height);
+						var data = imageData.data;
+						Ort=8;
+						bin=32;
+						var width=imageObj.width;
+						var height=imageObj.height;	
+						var image = new Array(height);
+						for (i = 0; i <height; ++ i)
+						{
+							image[i] = new Array(width);
+							for (j = 0; j <width; ++ j)
+								image[i][j] = new Array(3);
+						}
+						var clm = new Array(height);
+						var clo = new Array(height);
+						var b1 = new Array(height);
+						for (i = 0; i <height; ++ i)
+						{
+							clm[i] = new Array(width);
+							clo[i] = new Array(width);
+							b1[i] = new Array(width);	
+						}
+						i=0;
+						for(var row=0; row<height; row++)
+						{
+							for(var col=0; col<width; col++)
+							{
+								image[row][col][0]=(data[i]/255).toFixed(4);
+								image[row][col][1]=(data[i+1]/255).toFixed(4);
+								image[row][col][2]=(data[i+2]/255).toFixed(4);
+								i=i+4;
+							}
+						}
+						radius=SetRadius(width,height);		
+						BrGM1=BrightnessGradient(image,Ort,bin,radius,width,height);	
+						//ColorGM=ColorGradient(image,Ort,bin,radius,width,height)
+						/*var m=0;
+						for(i=0;i<height;i++)
+						{
+							for(j=0;j<width;j++)
+							{
+								data[m]=Math.ceil(ColorGM[i][j]*255);
+								data[m+1]=Math.ceil(ColorGM[i][j]*255);
+								data[m+2]=Math.ceil(ColorGM[i][j]*255);
+								m=m+4;
+							}
+						}*/
+						var m=0;
+						for(i=0;i<height;i++)
+						{
+							for(j=0;j<width;j++)
+							{
+								data[m]=Math.ceil(BrGM1[i][j]*255);
+								data[m+1]=Math.ceil(BrGM1[i][j]*255);
+								data[m+2]=Math.ceil(BrGM1[i][j]*255);
+								m=m+4;
+							}
+						}
+						context.putImageData(imageData, 0, 0);
+						sendResponse({farewell: canvas.toDataURL()}); 
+					};
+				}
+			});
+		</script>
+	</head>
+	<body>
+	</body>
+</html>
